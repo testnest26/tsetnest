@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>TESTNEST - Test & Worksheet Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Onest:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --secondary: #004E89;
+            --accent: #FFD23F;
+            --bg-main: #F7F7F2;
+            --bg-card: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-light: #666666;
+            --success: #06D6A0;
+            --error: #EF476F;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Onest', sans-serif;
+            background: linear-gradient(135deg, #F7F7F2 0%, #E8E8DD 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        /* CRITICAL: Make all clickable things work on mobile */
+        button, .option, .tab, .card, a {
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(255,107,53,0.2);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-card);
+            padding: 15px 20px;
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 25px;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2em;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* BUTTONS - Large touch targets for mobile */
+        .btn {
+            display: inline-block;
+            padding: 16px 28px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Onest', sans-serif;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-height: 52px;
+            touch-action: manipulation;
+            -webkit-appearance: none;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.35);
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 78, 137, 0.3);
+            width: 100%;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 13px;
+            min-height: 42px;
+            width: auto;
+        }
+
+        /* Dashboard Cards */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 8px 25px var(--shadow);
+            border-left: 5px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .card-text h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5em;
+            color: var(--secondary);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .card-text p {
+            color: var(--text-light);
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .card-btn {
+            flex-shrink: 0;
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 35px var(--shadow);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F0F0F0;
+        }
+
+        .timer {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 2px;
+            background: rgba(255,107,53,0.1);
+            padding: 5px 14px;
+            border-radius: 10px;
+        }
+
+        .timer.warning {
+            color: var(--error);
+            background: rgba(239,71,111,0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #E0E0E0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+
+        .question-counter {
+            color: var(--text-light);
+            font-size: 0.9em;
+            margin-bottom: 12px;
+        }
+
+        .question h3 {
+            font-size: 1.15em;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        /* OPTIONS - Critical for mobile touch */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #F8F8F8;
+            padding: 16px 18px;
+            border-radius: 14px;
+            border: 2.5px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-height: 58px;
+            transition: all 0.15s ease;
+            -webkit-tap-highlight-color: rgba(255,107,53,0.15);
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .option:active {
+            transform: scale(0.98);
+            background: rgba(255,107,53,0.08);
+            border-color: var(--primary);
+        }
+
+        .option.selected {
+            background: rgba(255, 107, 53, 0.1);
+            border-color: var(--primary);
+        }
+
+        .option-label {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-label {
+            background: var(--secondary);
+        }
+
+        .option-text {
+            font-size: 1em;
+            line-height: 1.4;
+            color: var(--text-dark);
+        }
+
+        /* Quiz navigation buttons */
+        .quiz-nav {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .quiz-nav .btn {
+            flex: 1;
+        }
+
+        /* Results */
+        .results {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        .score-text {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: white;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        /* Admin Panel */
+        .admin-form {
+            background: var(--bg-card);
+            padding: 22px;
+            border-radius: 20px;
+            box-shadow: 0 10px 35px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8em;
+            color: var(--secondary);
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-family: 'Onest', sans-serif;
+            font-size: 16px; /* 16px prevents iOS zoom */
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .option-input {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #F8F8F8;
+            border-radius: 10px;
+        }
+
+        .option-input input[type="radio"] {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .option-input input[type="text"] {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Onest', sans-serif;
+        }
+
+        /* Worksheets */
+        .worksheet-card {
+            background: var(--bg-card);
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px var(--shadow);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .worksheet-info h3 {
+            margin-bottom: 6px;
+            color: var(--secondary);
+            font-size: 1em;
+        }
+
+        .worksheet-info p {
+            color: var(--text-light);
+            font-size: 0.85em;
+            margin-bottom: 12px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Login */
+        .login-container {
+            max-width: 420px;
+            margin: 60px auto 0;
+            background: var(--bg-card);
+            padding: 30px 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 25px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3em;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            background: #F0F0F0;
+            padding: 5px;
+            border-radius: 14px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            font-family: 'Onest', sans-serif;
+            color: var(--text-light);
+            min-height: 48px;
+            touch-action: manipulation;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab:active {
+            transform: scale(0.97);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 9999;
+            font-weight: 600;
+            white-space: nowrap;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: translateX(-50%) scale(0.8); opacity: 0; }
+            to { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+
+        .hint-text {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--text-light);
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+
+        /* Back button */
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1em;
+            padding: 10px 0;
+            background: none;
+            border: none;
+            font-family: 'Onest', sans-serif;
+            touch-action: manipulation;
+            min-height: 44px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="loginScreen" class="container">
+        <div class="login-container">
+            <div class="login-title">TESTNEST</div>
+            <div class="tabs">
+                <button class="tab active" id="tabStudent" onclick="switchTab('student')">Student</button>
+                <button class="tab" id="tabAdmin" onclick="switchTab('admin')">Admin</button>
+            </div>
+
+            <div id="studentLogin">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="studentUsername" placeholder="Enter username" autocomplete="off" autocapitalize="none">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="studentPassword" placeholder="Enter password" autocomplete="off">
+                </div>
+                <button class="btn btn-primary" onclick="loginStudent()">LOGIN AS STUDENT</button>
+            </div>
+
+            <div id="adminLogin" class="hidden">
+                <div class="form-group">
+                    <label>Admin Username</label>
+                    <input type="text" id="adminUsername" placeholder="Enter admin username" autocomplete="off" autocapitalize="none">
+                </div>
+                <div class="form-group">
+                    <label>Admin Password</label>
+                    <input type="password" id="adminPassword" placeholder="Enter password" autocomplete="off">
+                </div>
+                <button class="btn btn-secondary" onclick="loginAdmin()">LOGIN AS ADMIN</button>
+            </div>
+
+            <p class="hint-text">Demo: student / student123<br>Admin: admin / admin123</p>
+        </div>
+    </div>
+
+    <!-- ===== STUDENT DASHBOARD ===== -->
+    <div id="studentDashboard" class="hidden">
+        <header>
+            <div class="header-content">
+                <h1>TESTNEST</h1>
+                <button class="btn btn-outline btn-small" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="container">
+
+            <!-- Dashboard Home -->
+            <div id="dashboardView">
+                <p style="margin-bottom:15px; color: var(--text-light);" id="welcomeMsg"></p>
+                <div class="dashboard">
+                    <div class="card">
+                        <div class="card-text">
+                            <h2>📝 Take a Test</h2>
+                            <p>Test your knowledge with MCQ quizzes</p>
+                        </div>
+                        <div class="card-btn">
+                            <button class="btn btn-primary btn-small" onclick="startQuiz()">START</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-text">
+                            <h2>📄 Worksheets</h2>
+                            <p>Download PDF worksheets for practice</p>
+                        </div>
+                        <div class="card-btn">
+                            <button class="btn btn-secondary btn-small" onclick="showWorksheets()">VIEW</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-text">
+                            <h2>📊 My Results</h2>
+                            <p>View your past quiz scores</p>
+                        </div>
+                        <div class="card-btn">
+                            <button class="btn btn-success btn-small" onclick="showMyResults()">VIEW</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz View -->
+            <div id="quizView" class="hidden">
+                <button class="back-btn" onclick="confirmBack()">← Back</button>
+                <div class="quiz-container">
+                    <div class="quiz-header">
+                        <div>
+                            <div style="font-weight:700; color: var(--secondary);">Quiz</div>
+                            <div class="question-counter" id="questionCounter">Q 1 of 1</div>
+                        </div>
+                        <div class="timer" id="timer">10:00</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar" style="width:0%"></div>
+                    </div>
+                    <div id="questionContainer"></div>
+                    <div class="quiz-nav">
+                        <button class="btn btn-outline" id="prevBtn" onclick="previousQuestion()">← Prev</button>
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Score Results View -->
+            <div id="resultsView" class="hidden">
+                <div class="quiz-container results">
+                    <div style="font-size:2.5em">🎉</div>
+                    <h2 style="margin:10px 0; font-family:'Bebas Neue',sans-serif; font-size:2em; color:var(--secondary);">Quiz Complete!</h2>
+                    <div class="score-circle">
+                        <div class="score-text" id="scoreText">0%</div>
+                    </div>
+                    <p style="font-size:1.1em; margin-bottom:8px;">
+                        <strong id="scoreDetail"></strong>
+                    </p>
+                    <p id="scoreMsg" style="color:var(--text-light); margin-bottom:25px;"></p>
+                    <button class="btn btn-primary" onclick="backToDashboard()">Back to Dashboard</button>
+                </div>
+            </div>
+
+            <!-- Worksheets View -->
+            <div id="worksheetsView" class="hidden">
+                <button class="back-btn" onclick="backToDashboard()">← Back</button>
+                <h2 class="section-title">📄 Worksheets</h2>
+                <div id="worksheetsList"></div>
+            </div>
+
+            <!-- My Results View -->
+            <div id="myResultsView" class="hidden">
+                <button class="back-btn" onclick="backToDashboard()">← Back</button>
+                <h2 class="section-title">📊 My Results</h2>
+                <div id="resultsList"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== ADMIN DASHBOARD ===== -->
+    <div id="adminDashboard" class="hidden">
+        <header>
+            <div class="header-content">
+                <h1>ADMIN</h1>
+                <button class="btn btn-outline btn-small" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="container">
+
+            <!-- Add Question -->
+            <div class="admin-form">
+                <div class="section-title">➕ Add Question</div>
+                <div class="form-group">
+                    <label>Question</label>
+                    <textarea id="newQuestion" placeholder="Type your question here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Options (select ✅ = correct answer)</label>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="0" checked>
+                        <input type="text" id="opt1" placeholder="Option A">
+                    </div>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="1">
+                        <input type="text" id="opt2" placeholder="Option B">
+                    </div>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="2">
+                        <input type="text" id="opt3" placeholder="Option C">
+                    </div>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="3">
+                        <input type="text" id="opt4" placeholder="Option D">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addQuestion()">ADD QUESTION</button>
+            </div>
+
+            <!-- Add Worksheet -->
+            <div class="admin-form">
+                <div class="section-title">📄 Add Worksheet</div>
+                <div class="form-group">
+                    <label>Worksheet Title</label>
+                    <input type="text" id="wsTitle" placeholder="e.g. Math Chapter 1">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="wsDesc" placeholder="Brief description">
+                </div>
+                <div class="form-group">
+                    <label>PDF Link (Google Drive or any URL)</label>
+                    <input type="url" id="wsLink" placeholder="https://drive.google.com/...">
+                </div>
+                <button class="btn btn-secondary" onclick="addWorksheet()">ADD WORKSHEET</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="admin-form">
+                <div class="section-title">📊 Stats</div>
+                <p style="margin-bottom:12px;">Total Questions: <strong id="questionCount" style="color:var(--primary); font-size:1.3em;">0</strong></p>
+                <p style="margin-bottom:20px;">Total Worksheets: <strong id="worksheetCount" style="color:var(--secondary); font-size:1.3em;">0</strong></p>
+                <button class="btn btn-outline btn-small" onclick="clearQuestions()" style="margin-right:10px; margin-bottom:10px;">Clear All Questions</button>
+                <button class="btn btn-outline btn-small" onclick="clearWorksheets()">Clear All Worksheets</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ===== DATA =====
+        let quizData = [
+            { question: "What is the capital of India?", options: ["Mumbai", "New Delhi", "Kolkata", "Chennai"], correct: 1 },
+            { question: "Which planet is closest to the Sun?", options: ["Venus", "Earth", "Mercury", "Mars"], correct: 2 },
+            { question: "What is 15 × 4?", options: ["45", "60", "55", "70"], correct: 1 }
+        ];
+
+        let worksheets = [
+            { title: "Mathematics - Chapter 1", description: "Basic algebra practice problems", link: "#" }
+        ];
+
+        let myResults = [];
+        let currentUser = null;
+        let currentQ = 0;
+        let answers = [];
+        let timerInterval = null;
+        let timeLeft = 600;
+        let activeTab = 'student';
+
+        // ===== TAB SWITCH =====
+        function switchTab(type) {
+            activeTab = type;
+            document.getElementById('tabStudent').classList.toggle('active', type === 'student');
+            document.getElementById('tabAdmin').classList.toggle('active', type === 'admin');
+            document.getElementById('studentLogin').classList.toggle('hidden', type !== 'student');
+            document.getElementById('adminLogin').classList.toggle('hidden', type !== 'admin');
+        }
+
+        // ===== LOGIN =====
+        function loginStudent() {
+            const u = document.getElementById('studentUsername').value.trim();
+            const p = document.getElementById('studentPassword').value.trim();
+            if (u === 'student' && p === 'student123') {
+                currentUser = { name: u, type: 'student' };
+                show('studentDashboard');
+                hide('loginScreen');
+                document.getElementById('welcomeMsg').textContent = '👋 Welcome, ' + u + '!';
+                showNotification('Login successful! ✅');
+            } else {
+                alert('❌ Wrong credentials!\nUsername: student\nPassword: student123');
+            }
+        }
+
+        function loginAdmin() {
+            const u = document.getElementById('adminUsername').value.trim();
+            const p = document.getElementById('adminPassword').value.trim();
+            if (u === 'admin' && p === 'admin123') {
+                currentUser = { name: u, type: 'admin' };
+                show('adminDashboard');
+                hide('loginScreen');
+                updateStats();
+                showNotification('Admin login successful! ✅');
+            } else {
+                alert('❌ Wrong credentials!\nUsername: admin\nPassword: admin123');
+            }
+        }
+
+        function logout() {
+            if (!confirm('Are you sure you want to logout?')) return;
+            currentUser = null;
+            clearInterval(timerInterval);
+            hide('studentDashboard');
+            hide('adminDashboard');
+            show('loginScreen');
+            backToDashboard();
+            document.getElementById('studentUsername').value = '';
+            document.getElementById('studentPassword').value = '';
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        // ===== QUIZ =====
+        function startQuiz() {
+            if (quizData.length === 0) {
+                alert('No questions available yet! Ask your admin to add questions.');
+                return;
+            }
+            hide('dashboardView');
+            show('quizView');
+            currentQ = 0;
+            answers = new Array(quizData.length).fill(null);
+            timeLeft = quizData.length * 60; // 1 min per question
+            startTimer();
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = quizData[currentQ];
+            const labels = ['A', 'B', 'C', 'D'];
+            document.getElementById('questionCounter').textContent = `Q ${currentQ + 1} of ${quizData.length}`;
+            document.getElementById('progressBar').style.width = ((currentQ + 1) / quizData.length * 100) + '%';
+
+            document.getElementById('questionContainer').innerHTML = `
+                <div class="question">
+                    <h3>${currentQ + 1}. ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <div class="option ${answers[currentQ] === i ? 'selected' : ''}" 
+                                 onclick="pickAnswer(${i})" 
+                                 ontouchend="pickAnswer(${i})">
+                                <div class="option-label">${labels[i]}</div>
+                                <span class="option-text">${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('prevBtn').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+            document.getElementById('nextBtn').textContent = currentQ === quizData.length - 1 ? 'Finish ✓' : 'Next →';
+        }
+
+        function pickAnswer(i) {
+            answers[currentQ] = i;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQ < quizData.length - 1) {
+                currentQ++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQ > 0) {
+                currentQ--;
+                renderQuestion();
+            }
+        }
+
+        function confirmBack() {
+            if (confirm('Go back? Your progress will be lost.')) {
+                clearInterval(timerInterval);
+                backToDashboard();
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) finishQuiz();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            const el = document.getElementById('timer');
+            el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            el.classList.toggle('warning', timeLeft <= 60);
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            let correct = 0;
+            answers.forEach((a, i) => { if (a === quizData[i].correct) correct++; });
+            const pct = Math.round((correct / quizData.length) * 100);
+
+            // Save result
+            myResults.unshift({
+                date: new Date().toLocaleDateString(),
+                score: pct,
+                correct: correct,
+                total: quizData.length
+            });
+
+            hide('quizView');
+            show('resultsView');
+            document.getElementById('scoreText').textContent = pct + '%';
+            document.getElementById('scoreDetail').textContent = `${correct} out of ${quizData.length} correct`;
+            document.getElementById('scoreMsg').textContent = 
+                pct >= 80 ? '🌟 Excellent! Great job!' :
+                pct >= 60 ? '👍 Good work! Keep it up!' :
+                pct >= 40 ? '📚 Keep practicing!' :
+                '💪 Don\'t give up! Try again!';
+        }
+
+        function backToDashboard() {
+            clearInterval(timerInterval);
+            ['quizView','resultsView','worksheetsView','myResultsView'].forEach(hide);
+            show('dashboardView');
+        }
+
+        // ===== WORKSHEETS =====
+        function showWorksheets() {
+            hide('dashboardView');
+            show('worksheetsView');
+            const list = document.getElementById('worksheetsList');
+            if (worksheets.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-light); text-align:center; padding:30px;">No worksheets available yet.</p>';
+                return;
+            }
+            list.innerHTML = worksheets.map((ws, i) => `
+                <div class="worksheet-card">
+                    <div class="worksheet-info">
+                        <h3>📄 ${ws.title}</h3>
+                        <p>${ws.description}</p>
+                        <button class="btn btn-primary btn-small" onclick="window.open('${ws.link}','_blank')">
+                            ⬇️ Download PDF
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== MY RESULTS =====
+        function showMyResults() {
+            hide('dashboardView');
+            show('myResultsView');
+            const list = document.getElementById('resultsList');
+            if (myResults.length === 0) {
+                list.innerHTML = '<div class="admin-form" style="text-align:center;"><p style="color:var(--text-light); padding:20px;">No results yet. Take a quiz first!</p><button class="btn btn-primary" onclick="backToDashboard()">Take Quiz Now</button></div>';
+                return;
+            }
+            list.innerHTML = myResults.map((r, i) => `
+                <div class="worksheet-card" style="border-left-color:${r.score>=60?'var(--success)':'var(--error)'}">
+                    <div>
+                        <h3 style="color:var(--secondary);">Quiz #${myResults.length - i}</h3>
+                        <p style="color:var(--text-light); font-size:0.85em;">${r.date}</p>
+                        <p style="margin-top:5px;"><strong style="font-size:1.3em; color:${r.score>=60?'var(--success)':'var(--error)'};">${r.score}%</strong> — ${r.correct}/${r.total} correct</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== ADMIN FUNCTIONS =====
+        function addQuestion() {
+            const q = document.getElementById('newQuestion').value.trim();
+            const o1 = document.getElementById('opt1').value.trim();
+            const o2 = document.getElementById('opt2').value.trim();
+            const o3 = document.getElementById('opt3').value.trim();
+            const o4 = document.getElementById('opt4').value.trim();
+            const correct = parseInt(document.querySelector('input[name="correct"]:checked').value);
+
+            if (!q || !o1 || !o2 || !o3 || !o4) {
+                alert('Please fill in all fields!');
+                return;
+            }
+
+            quizData.push({ question: q, options: [o1, o2, o3, o4], correct });
+            document.getElementById('newQuestion').value = '';
+            document.getElementById('opt1').value = '';
+            document.getElementById('opt2').value = '';
+            document.getElementById('opt3').value = '';
+            document.getElementById('opt4').value = '';
+            document.querySelector('input[name="correct"][value="0"]').checked = true;
+            updateStats();
+            showNotification('Question added! ✅');
+        }
+
+        function addWorksheet() {
+            const t = document.getElementById('wsTitle').value.trim();
+            const d = document.getElementById('wsDesc').value.trim();
+            const l = document.getElementById('wsLink').value.trim();
+            if (!t || !d || !l) { alert('Please fill in all fields!'); return; }
+            worksheets.push({ title: t, description: d, link: l });
+            document.getElementById('wsTitle').value = '';
+            document.getElementById('wsDesc').value = '';
+            document.getElementById('wsLink').value = '';
+            updateStats();
+            showNotification('Worksheet added! ✅');
+        }
+
+        function clearQuestions() {
+            if (confirm(`Delete all ${quizData.length} questions?`)) {
+                quizData = [];
+                updateStats();
+                showNotification('All questions cleared!');
+            }
+        }
+
+        function clearWorksheets() {
+            if (confirm(`Delete all ${worksheets.length} worksheets?`)) {
+                worksheets = [];
+                updateStats();
+                showNotification('All worksheets cleared!');
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('questionCount').textContent = quizData.length;
+            document.getElementById('worksheetCount').textContent = worksheets.length;
+        }
+
+        // ===== HELPERS =====
+        function show(id) { document.getElementById(id).classList.remove('hidden'); }
+        function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function showNotification(msg) {
+            const old = document.querySelector('.notification');
+            if (old) old.remove();
+            const n = document.createElement('div');
+            n.className = 'notification';
+            n.textContent = msg;
+            document.body.appendChild(n);
+            setTimeout(() => n.remove(), 2500);
+        }
+
+        // Allow pressing Enter to login
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (activeTab === 'student') loginStudent();
+                else loginAdmin();
+            }
+        });
+
+        updateStats();
+    </script>
+</body>
+</html>
